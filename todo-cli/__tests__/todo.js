@@ -1,95 +1,79 @@
-const todoList = () => {
-    const all = [];
-  
-    const formattedDate = (d) => {
-      const dateCopy = new Date(d);
-      return dateCopy.toISOString().split("T")[0];
-    };
-  
+const todoList = require("../todo");
+let todos;
+
+beforeEach(() => {
+  todos = todoList();
+});
+
+describe("TodoList Test Suite", () => {
+  test("Should add new todo", () => {
+    const todoItemsCount = todos.all.length;
+    todos.add({
+      title: "Test todo 2",
+      completed: false,
+      dueDate: "2023-12-20",
+    });
+    expect(todos.all.length).toBe(todoItemsCount + 1);
+  });
+
+  test("Should mark a todo as complete", () => {
+    todos.add({
+      title: "Test todo",
+      completed: false,
+      dueDate: "2023-12-20",
+    });
+
+    expect(todos.all[0].completed).toBe(false);
+    todos.markAsComplete(0);
+    expect(todos.all[0].completed).toBe(true);
+  });
+
+  test("Should retrieve overdue items", () => {
     const dateToday = new Date();
+    const formattedDate = (d) => d.toISOString().split("T")[0];
+    const yesterday = formattedDate(
+      new Date(dateToday.setDate(dateToday.getDate() - 1)),
+    );
+
+    const overDueTodoItemsCount = todos.overdue().length;
+    const overdueAdd = {
+      title: "Complete my assignment",
+      dueDate: yesterday,
+      completed: false,
+    };
+    todos.add(overdueAdd);
+    expect(todos.overdue().length).toEqual(overDueTodoItemsCount + 1);
+  });
+
+  test("Should retrieve due today items", () => {
+    const dateToday = new Date();
+    const formattedDate = (d) => d.toISOString().split("T")[0];
     const today = formattedDate(dateToday);
-  
-    const add = (todoItem) => {
-      all.push(todoItem);
+
+    const DueTodayTodoItemsCount = todos.dueToday().length;
+    const todayAdd = {
+      title: "Complete this milestone",
+      dueDate: today,
+      completed: false,
     };
-  
-    const markAsComplete = (index) => {
-      all[index].completed = true;
+    todos.add(todayAdd);
+    expect(todos.dueToday().length).toEqual(DueTodayTodoItemsCount + 1);
+  });
+
+  test("Should retrieve due later items", () => {
+    const dateToday = new Date();
+    const formattedDate = (d) => d.toISOString().split("T")[0];
+    const tomorrow = formattedDate(
+      new Date(dateToday.setDate(dateToday.getDate() + 1)),
+    );
+
+    const DueLaterTodoItemsCount = todos.dueLater().length;
+    const laterAdd = {
+      title: "Prepare for sem exams",
+      dueDate: tomorrow,
+      completed: false,
     };
-  
-    const overdue = () => {
-      return all.filter((item) => !item.completed && item.dueDate < today);
-    };
-  
-    const dueToday = () => {
-      return all.filter((item) => item.dueDate === today);
-    };
-  
-    const dueLater = () => {
-      return all.filter((item) => !item.completed && item.dueDate > today);
-    };
-  
-    const toDisplayableList = (list) => {
-      let displayableList = "";
-  
-      list.forEach((item) => {
-        const checkbox = item.completed ? "[x]" : "[ ]";
-        const date = item.dueDate === today ? "" : ` ${item.dueDate}`;
-        displayableList += `${checkbox} ${item.title}${date}\n`;
-      });
-  
-      return displayableList.trim();
-    };
-  
-    return {
-      all,
-      add,
-      markAsComplete,
-      overdue,
-      dueToday,
-      dueLater,
-      toDisplayableList,
-    };
-  };
-  
-  module.exports = todoList;
-  // const todos = todoList();
-  
-  // const formattedDate = d => {
-  //   return d.toISOString().split("T")[0]
-  // }
-  
-  // var dateToday = new Date()
-  // const today = formattedDate(dateToday)
-  // const yesterday = formattedDate(
-  //   new Date(new Date().setDate(dateToday.getDate() - 1))
-  // )
-  // const tomorrow = formattedDate(
-  //   new Date(new Date().setDate(dateToday.getDate() + 1))
-  // )
-  
-  // todos.add({ title: 'Submit assignment', dueDate: yesterday, completed: false })
-  // todos.add({ title: 'Pay rent', dueDate: today, completed: true })
-  // todos.add({ title: 'Service Vehicle', dueDate: today, completed: false })
-  // todos.add({ title: 'File taxes', dueDate: tomorrow, completed: false })
-  // todos.add({ title: 'Pay electric bill', dueDate: tomorrow, completed: false })
-  
-  // console.log("My Todo-list\n")
-  
-  // console.log("Overdue")
-  // var overdues = todos.overdue()
-  // var formattedOverdues = todos.toDisplayableList(overdues)
-  // console.log(formattedOverdues)
-  // console.log("\n")
-  
-  // console.log("Due Today")
-  // let itemsDueToday = todos.dueToday()
-  // let formattedItemsDueToday = todos.toDisplayableList(itemsDueToday)
-  // console.log(formattedItemsDueToday)
-  // console.log("\n")
-  
-  // console.log("Due Later")
-  // let itemsDueLater = todos.dueLater()
-  // let formattedItemsDueLater = todos.toDisplayableList(itemsDueLater)
-  // console.log(formattedItemsDueLater)
-  // console.log("\n\n")
+    todos.add(laterAdd);
+    expect(todos.dueLater().length).toEqual(DueLaterTodoItemsCount + 1);
+  });
+});
