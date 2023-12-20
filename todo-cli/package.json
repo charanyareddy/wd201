@@ -13,7 +13,7 @@
       "prettier --write ."
     ]
   },
-  "author": "Mark",
+  "author": "Bunny",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.56.0",
