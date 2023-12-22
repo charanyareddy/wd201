@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
-
-SCRIPT_DIR="$(dirname -- "$0")"
-
-. "$SCRIPT_DIR/_/husky.sh"
+. "$(dirname -- "$0")/_/husky.sh"
 
 npm test
 
