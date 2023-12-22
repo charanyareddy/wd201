@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+SCRIPT_DIR="$(dirname -- "$0")"
+
+. "$SCRIPT_DIR/_/husky.sh"
+
+npm test
+
+npx lint-staged
